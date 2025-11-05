@@ -1,105 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Picks</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallpaper Gallery</title>
+  <link rel="stylesheet" href="style.css"> 
   <style>
     body {
-  font-family: Arial, sans-serif;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
   background: #f3f4f6;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  color: #333;
 }
 
-.search-container {
-  background: #fff;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+header {
   text-align: center;
-  width: 400px;
-}
-
-.search-box {
-  display: flex;
-  margin-top: 20px;
-}
-
-.search-box input {
-  flex: 1;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 6px 0 0 6px;
-  outline: none;
-}
-
-.search-box button {
-  padding: 10px 20px;
+  padding: 20px;
   background: #007bff;
   color: white;
+}
+
+.search-bar {
+  margin-top: 15px;
+}
+
+.search-bar input {
+  padding: 10px;
+  width: 60%;
   border: none;
-  border-radius: 0 6px 6px 0;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+  font-size: 16px;
+}
+
+.search-bar button {
+  padding: 10px 20px;
+  border: none;
+  background: #0056b3;
+  color: white;
+  border-radius: 0 5px 5px 0;
   cursor: pointer;
+  font-size: 16px;
   transition: background 0.3s ease;
 }
 
-.search-box button:hover {
-  background: #0056b3;
+.search-bar button:hover {
+  background: #003d80;
 }
 
-#results {
-  margin-top: 20px;
-  text-align: left;
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+  padding: 20px;
 }
-  </style>
+
+.gallery img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.gallery img:hover {
+  transform: scale(1.05);
+}
+
+footer {
+  text-align: center;
+  padding: 15px;
+  background: #007bff;
+  color: white;
+  margin-top: 30px;
+}
+    </style>
 </head>
 <body>
-  <div class="search-container">
-    <h2>Welcome dear User</h2>
-    <div class="search-box">
-      <input type="text" id="searchInput" placeholder="Type your query..." />
+
+  <header>
+    <h1>Wallpaper Gallery</h1>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search wallpapers...">
       <button id="searchBtn">Search</button>
     </div>
-    <div id="results"></div>
-  </div>
+  </header>
 
-  <script>
-    document.getElementById('searchBtn').addEventListener('click', function() {
-  const query = document.getElementById('searchInput').value.trim();
-  const resultsDiv = document.getElementById('results');
-  
-  if (query === '') {
-    resultsDiv.innerHTML = '<p>Please enter a search term.</p>';
-    return;
-  }
+  <main>
+    <div id="gallery" class="gallery"></div>
+  </main>
 
-  resultsDiv.innerHTML = '<p>Loading...</p>';
+  <footer>
+    <p>© 2025 Wallpaper Gallery. All rights reserved.</p>
+  </footer>
 
-  // Send request to PHP backend
-  fetch(`search.php?q=${encodeURIComponent(query)}`)
+  <script >
+    document.addEventListener("DOMContentLoaded", () => {
+  loadWallpapers();
+
+  document.getElementById("searchBtn").addEventListener("click", () => {
+    const query = document.getElementById("searchInput").value.trim();
+    loadWallpapers(query);
+  });
+});
+
+function loadWallpapers(query = "") {
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = "<p>Loading wallpapers...</p>";
+
+  fetch(`wallpapers.php?q=${encodeURIComponent(query)}`)
     .then(response => response.json())
     .then(data => {
       if (data.error) {
-        resultsDiv.innerHTML = `<p>${data.error}</p>`;
+        gallery.innerHTML = `<p>${data.error}</p>`;
+      } else if (data.wallpapers.length === 0) {
+        gallery.innerHTML = `<p>No wallpapers found.</p>`;
       } else {
-        // Display formatted results
-        let html = '<ul>';
-        data.results.forEach(item => {
-          html += `<li>${item}</li>`;
-        });
-        html += '</ul>';
-        resultsDiv.innerHTML = html;
+        gallery.innerHTML = data.wallpapers.map(img => `
+          <img src="${img.url}" alt="${img.name}">
+        `).join("");
       }
     })
     .catch(err => {
-      resultsDiv.innerHTML = `<p>Error: ${err.message}</p>`;
+      gallery.innerHTML = `<p>Error: ${err.message}</p>`;
     });
-});
+}
   </script>
 </body>
 </html>
