@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tle<tilte>
+  <link rel="stylesheet"style.css" />
+</head>
+<body>
+  <div class="search-container">
+    <h2>Welcome to title</h2>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Type your query..." />
+      <button id="searchBtn">Search</button>
+    </div>
+    <div id="results"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html> Picks-
+This is a picture website 
